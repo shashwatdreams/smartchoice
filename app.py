@@ -4,7 +4,7 @@ st.set_page_config(page_title='Xfinity Personalized Recommendation System', layo
 
 st.title('Xfinity Personalized Recommendation System')
 
-st.subheader('Which Xfinity services are you interested in?')
+st.subheader('Which services are you interested in?')
 services = st.multiselect('Select one or more options:', ['Internet', 'Mobile', 'TV', 'Home Phone', 'Home Security'])
 
 if services:
