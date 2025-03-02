@@ -127,8 +127,13 @@ elif st.session_state.current_step > len(st.session_state.selected_services) + 1
         st.info(f"You're getting the best value with Xfinity's {selected_plan} plan! Enjoy top-notch service at unbeatable prices.")
         competitor_data = COMPETITOR_PRICES.get(service, [])
         df = pd.DataFrame(competitor_data, columns=['Provider', 'Price'])
-        fig = px.bar(df, x='Provider', y='Price', color='Provider', title=f'{service} Price Comparison',
+        df = df.sort_values(by='Price', ascending=False)
+        df['Color'] = df['Provider'].apply(lambda x: 'green' if x == 'Xfinity' else 'red')
+        fig = px.bar(df, x='Provider', y='Price', color='Color',
+                     color_discrete_map={'green': 'green', 'red': 'red'},
+                     title=f'{service} Price Comparison',
                      labels={'Price': 'Monthly Cost ($)', 'Provider': 'Service Provider'})
+        fig.update_layout(showlegend=False)
         st.plotly_chart(fig)
 
     if st.button('Start Over'):
