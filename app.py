@@ -1,12 +1,14 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import openai
+from openai import OpenAI
 
 st.set_page_config(page_title='Xfinity Personalized Recommendation System', layout='centered')
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Initialize OpenAI client
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
+# Product information and purchase links
 PURCHASE_LINKS = {
     'Internet': 'https://www.xfinity.com/shop/internet',
     'Mobile': 'https://www.xfinity.com/mobile',
@@ -56,6 +58,7 @@ Guidelines:
 6. Keep responses under 300 words
 """
 
+# Session state initialization
 if 'selected_services' not in st.session_state:
     st.session_state.selected_services = []
 if 'current_step' not in st.session_state:
@@ -63,6 +66,7 @@ if 'current_step' not in st.session_state:
 if 'chat_messages' not in st.session_state:
     st.session_state.chat_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
+# Service configuration
 OPTIONS = {
     'Internet': [
         ("150 Mbps Plan", "Suitable for browsing and streaming", 19.99),
@@ -102,6 +106,7 @@ COMPETITOR_PRICES = {
 
 SERVICES = list(OPTIONS.keys())
 
+# Main app logic
 if st.session_state.current_step == 1:
     col1, col2 = st.columns([3, 2])
     
@@ -135,7 +140,7 @@ if st.session_state.current_step == 1:
         st.subheader("Or chat with an assistant")
         
         # Display chat history
-        for msg in st.session_state.chat_messages[1:]:  # Skip system message
+        for msg in st.session_state.chat_messages[1:]:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"], unsafe_allow_html=True)
 
@@ -150,16 +155,18 @@ if st.session_state.current_step == 1:
                     full_response = ""
                     message_placeholder = st.empty()
                     
-                    # Generate streaming response
-                    for response in openai.ChatCompletion.create(
+                    # Generate streaming response using new API format
+                    stream = client.chat.completions.create(
                         model="gpt-4o",
                         messages=st.session_state.chat_messages,
                         stream=True,
                         temperature=0.7,
                         max_tokens=500
-                    ):
-                        chunk = response.choices[0].delta.get("content", "")
-                        full_response += chunk
+                    )
+                    
+                    for chunk in stream:
+                        content = chunk.choices[0].delta.content or ""
+                        full_response += content
                         message_placeholder.markdown(full_response + "▌")
                     
                     message_placeholder.markdown(full_response)
