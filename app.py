@@ -4,6 +4,15 @@ import plotly.express as px
 
 st.set_page_config(page_title='Xfinity Personalized Recommendation System', layout='centered')
 
+# Add purchase links for each service
+PURCHASE_LINKS = {
+    'Internet': 'https://www.xfinity.com/shop/internet',
+    'Mobile': 'https://www.xfinity.com/mobile',
+    'TV': 'https://www.xfinity.com/tv',
+    'Home Phone': 'https://www.xfinity.com/home-phone',
+    'Home Security': 'https://www.xfinity.com/home-security'
+}
+
 st.markdown(
     '''
     <style>
@@ -128,6 +137,14 @@ elif st.session_state.current_step > len(st.session_state.selected_services) + 1
         st.markdown(f"**Price:** ${selected_price:.2f} per month")
         st.markdown(f"**Features:**")
         st.markdown(f"- {description}")
+        
+        if service in PURCHASE_LINKS:
+            st.link_button(
+                "📦 Purchase Now",
+                url=PURCHASE_LINKS[service],
+                use_container_width=True,
+                help=f"Click to purchase Xfinity {service} services"
+            )
 
         competitor_data = COMPETITOR_PRICES.get(service, [])
         df = pd.DataFrame(competitor_data, columns=['Provider', 'Price'])
