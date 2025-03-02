@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 
 st.set_page_config(page_title='Xfinity Personalized Recommendation System', layout='centered')
 
@@ -11,13 +13,6 @@ st.markdown(
     div.stButton > button.active {
         background-color: #4CAF50 !important;
         color: white !important;
-    }
-    .savings-box {
-        background-color: #f0f8ff;
-        padding: 10px;
-        border-radius: 10px;
-        margin: 10px 0;
-        color: black !important;
     }
     .center-container {
         max-width: 600px;
@@ -69,11 +64,11 @@ OPTIONS = {
 }
 
 COMPETITOR_PRICES = {
-    'Internet': [("AT&T", 85), ("Verizon", 90), ("Spectrum", 80)],
-    'Mobile': [("T-Mobile", 55), ("Verizon", 60), ("AT&T", 65)],
-    'TV': [("DirecTV", 90), ("Dish", 88), ("FuboTV", 85)],
-    'Home Phone': [("AT&T", 35), ("Verizon", 30), ("Ooma", 28)],
-    'Home Security': [("ADT", 60), ("Ring", 55), ("Vivint", 70)]
+    'Internet': [("Xfinity", 30), ("AT&T", 85), ("Verizon", 90), ("Spectrum", 80)],
+    'Mobile': [("Xfinity", 40), ("T-Mobile", 55), ("Verizon", 60), ("AT&T", 65)],
+    'TV': [("Xfinity", 30), ("DirecTV", 90), ("Dish", 88), ("FuboTV", 85)],
+    'Home Phone': [("Xfinity", 15), ("AT&T", 35), ("Verizon", 30), ("Ooma", 28)],
+    'Home Security': [("Xfinity", 10), ("ADT", 60), ("Ring", 55), ("Vivint", 70)]
 }
 
 SERVICES = list(OPTIONS.keys())
@@ -128,19 +123,14 @@ elif st.session_state.current_step > len(st.session_state.selected_services) + 1
         normalized_key = service.replace(' ', '_').lower()
         selected_plan = st.session_state.get(normalized_key)
         selected_price = st.session_state.get(f"{normalized_key}_price", 0)
-        competitors = COMPETITOR_PRICES.get(service, [])
-        savings_text = ""
-        
-        for competitor, competitor_price in competitors:
-            savings = competitor_price - selected_price
-            savings_text += f"💰 Xfinity beats {competitor} by **${savings} per month**<br>"
-        
         st.markdown(f"### {service} Plan: {selected_plan if selected_plan else 'Not selected'}")
-        st.markdown(
-            f"<div class='savings-box' style='color: black !important;'>{savings_text}</div>",
-            unsafe_allow_html=True
-        )
-    
+        st.info(f"You're getting the best value with Xfinity's {selected_plan} plan! Enjoy top-notch service at unbeatable prices.")
+        competitor_data = COMPETITOR_PRICES.get(service, [])
+        df = pd.DataFrame(competitor_data, columns=['Provider', 'Price'])
+        fig = px.bar(df, x='Provider', y='Price', color='Provider', title=f'{service} Price Comparison',
+                     labels={'Price': 'Monthly Cost ($)', 'Provider': 'Service Provider'})
+        st.plotly_chart(fig)
+
     if st.button('Start Over'):
         st.session_state.clear()
         st.rerun()
