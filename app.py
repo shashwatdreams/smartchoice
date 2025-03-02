@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title='Xfinity Personalized Recommendation System', layout='wide')
+st.set_page_config(page_title='Xfinity Personalized Recommendation System', layout='centered')
 
 st.markdown(
     '''
@@ -18,6 +18,10 @@ st.markdown(
         border-radius: 10px;
         margin: 10px 0;
         color: black !important;
+    }
+    .center-container {
+        max-width: 600px;
+        margin: auto;
     }
     </style>
     ''',
@@ -74,6 +78,8 @@ COMPETITOR_PRICES = {
 
 SERVICES = list(OPTIONS.keys())
 
+st.markdown('<div class="center-container">', unsafe_allow_html=True)
+
 if st.session_state.current_step == 1:
     st.subheader('Which Xfinity services are you interested in?')
     for service in SERVICES:
@@ -115,7 +121,7 @@ elif st.session_state.current_step > 1 and st.session_state.current_step <= len(
             st.session_state[f"{normalized_key}_price"] = price
             st.session_state.current_step += 1
             st.rerun()
-    
+
 elif st.session_state.current_step > len(st.session_state.selected_services) + 1:
     st.subheader('Your Recommended Plan')
     for service in st.session_state.selected_services:
@@ -138,3 +144,5 @@ elif st.session_state.current_step > len(st.session_state.selected_services) + 1
     if st.button('Start Over'):
         st.session_state.clear()
         st.rerun()
+
+st.markdown('</div>', unsafe_allow_html=True)
