@@ -17,7 +17,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+<<<<<<< HEAD
 st.subheader('Which Xfinity services are you interested in?')
+=======
+st.subheader('Which services are you interested in?')
+services = st.multiselect('Select one or more options:', ['Internet', 'Mobile', 'TV', 'Home Phone', 'Home Security'])
+>>>>>>> d36b0b8df728c6c4974716210b714c31130d23de
 
 # Initialize session state for selected services
 if 'selected_services' not in st.session_state:
