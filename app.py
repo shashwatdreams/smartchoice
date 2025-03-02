@@ -4,10 +4,12 @@ st.set_page_config(page_title='Xfinity Personalized Recommendation System', layo
 
 st.markdown("""
     <style>
+        /* Base button style */
         div.stButton > button {
             transition: all 0.3s ease;
         }
         
+        /* Selected button style */
         div.stButton > button:focus:not(:active),
         div.stButton > button.active {
             background-color: #4CAF50 !important;
@@ -17,14 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-<<<<<<< HEAD
 st.subheader('Which Xfinity services are you interested in?')
-=======
-st.subheader('Which services are you interested in?')
-services = st.multiselect('Select one or more options:', ['Internet', 'Mobile', 'TV', 'Home Phone', 'Home Security'])
->>>>>>> d36b0b8df728c6c4974716210b714c31130d23de
 
-# Initialize session state for selected services
 if 'selected_services' not in st.session_state:
     st.session_state.selected_services = []
 
@@ -35,7 +31,6 @@ for service in services:
         service,
         key=service,
         use_container_width=True,
-        # Add 'active' class if service is selected
         type="primary" if service in st.session_state.selected_services else "secondary"
     )
     if btn:
